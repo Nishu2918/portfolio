@@ -49,7 +49,7 @@ const About = () => {
                   <span className="w-4 h-px bg-[#76553e]"></span> DESIGN SYSTEM STRATEGY
                 </li>
                 <li className="flex items-center gap-4 text-[#4e453c] text-[13px] font-medium tracking-wide">
-                  <span className="w-4 h-px bg-[#76553e]"></span> COMPONENT ENGINEERINGdsd
+                  <span className="w-4 h-px bg-[#76553e]"></span> COMPONENT ENGINEERING
                 </li>
               </ul>
             </div>
