@@ -1,36 +1,73 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { Navbar } from './components/layout/Navbar.jsx';
-import { Footer } from './components/layout/Footer.jsx';
-import Home from './pages/Home.jsx';
-import Projects from './pages/Projects.jsx';
-import About from './pages/About.jsx';
-import Contact from './pages/Contact.jsx';
-
-// Simple wrapper to scroll to top on route change
-const RouteWrapper = ({ children }) => {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-  return children;
-};
+import React, { useEffect, useState } from 'react';
+import Navbar from './components/Navbar.jsx';
+import Hero from './components/Hero.jsx';
+import About from './components/About.jsx';
+import Skills from './components/Skills.jsx';
+import Experience from './components/Experience.jsx';
+import Projects from './components/Projects.jsx';
+import Contact from './components/Contact.jsx';
+import Footer from './components/Footer.jsx';
 
 function App() {
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('portfolio-theme') || 'dark';
+    }
+    return 'dark';
+  });
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('portfolio-theme', next);
+      return next;
+    });
+  };
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+    );
+
+    const observe = () => {
+      document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+        observer.observe(el);
+      });
+    };
+
+    observe();
+    const timeout = setTimeout(observe, 500);
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(timeout);
+    };
+  }, []);
+
   return (
-    <Router>
-      <div className="flex flex-col min-h-screen bg-[var(--color-background)]">
-        <Navbar />
-        <div className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/projects" element={<RouteWrapper><Projects /></RouteWrapper>} />
-            <Route path="/about" element={<RouteWrapper><About /></RouteWrapper>} />
-            <Route path="/contact" element={<RouteWrapper><Contact /></RouteWrapper>} />
-          </Routes>
-        </div>
-        <Footer />
-      </div>
-    </Router>
+    <>
+      <Navbar theme={theme} toggleTheme={toggleTheme} />
+      <main>
+        <Hero />
+        <About />
+        <Skills />
+        <Experience />
+        <Projects />
+        <Contact />
+      </main>
+      <Footer />
+    </>
   );
 }
 
